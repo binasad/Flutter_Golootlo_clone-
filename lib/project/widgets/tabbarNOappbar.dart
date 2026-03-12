@@ -28,17 +28,14 @@ class pageOne extends StatelessWidget {
       required this.distance});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false ,
-      home: MyHomePage(
-        topImage: topImage,
-        title: title,
-        rating: rating,
-        loadData: loadData,
-        loadDataSecond: loadDataSecond,
-        loadDataThird: loadDataThird,
-        distance: distance,
-      ),
+    return MyHomePage(
+      topImage: topImage,
+      title: title,
+      rating: rating,
+      loadData: loadData,
+      loadDataSecond: loadDataSecond,
+      loadDataThird: loadDataThird,
+      distance: distance,
     );
   }
 }

@@ -103,8 +103,11 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
       body: isLoading
           ? content
-          : ListView.builder(
-
+          : hoopP.isEmpty
+              ? content
+              : Column(
+                  children: [
+                    Expanded(child: ListView.builder(
               itemCount: hoopP.length,
               itemBuilder: (BuildContext context, int index) {
                 final product = hoopP[index];
@@ -122,26 +125,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               }  */
                   key: Key(product.title),
                   direction: DismissDirection.horizontal,
-                  onDismissed: (direction) async {
-           // Remove the item from the datasource when dismissed
-
-                           /* final url = Uri.https(
-                                "pakis-8f258-default-rtdb.firebaseio.com",
-                'shopping-list/${hoopP[index].id}.json');
-                    */
-
-                    hoopP.removeAt(index);
-
+                  onDismissed: (direction) {
+                    ref.read(objectListProvider.notifier).removeItem(product.id);
                     ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('${product.title} dismissed')));
-
-     // it is deleted from databases
-             /*          final response = await http.delete(url);
-
-                    if (response.statusCode >= 400) {
-                      hoopP.insert(index, product);
-                    }
-                    */
+                        SnackBar(content: Text('${product.title} removed')));
                   },
                    
                   child:
@@ -193,7 +180,26 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   
                 );
               },
-            ),
+            )),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, offset: const Offset(0, -2))],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Total', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text(
+                            '\$${hoopP.fold(0.0, (sum, item) => sum + item.price * item.noProduct).toStringAsFixed(2)}',
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
     );
   }
 }

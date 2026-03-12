@@ -7,7 +7,8 @@ import 'package:flutter_application_golootlo_clone/project/model/golootloModel.d
  
  
 import 'package:flutter_application_golootlo_clone/project/screens/Page2ndGolootlo.dart';
- 
+import 'package:flutter_application_golootlo_clone/project/screens/search_screen.dart';
+import 'package:flutter_application_golootlo_clone/project/screens/profile_screen.dart';
 import 'package:flutter_application_golootlo_clone/project/widgets/dummyCart.dart';
  
 
@@ -90,6 +91,12 @@ Widget getSelectedWidget({required int index}) {
     case 1:
       widget = CartScreen();
       break;
+    case 2:
+      widget = const SearchScreen();
+      break;
+    case 3:
+      widget = const ProfileScreen();
+      break;
     default:
       widget = CarouselWithRow();
       break;
@@ -98,12 +105,12 @@ Widget getSelectedWidget({required int index}) {
 }
 
 // below is the carousel
-class CarouselWithRow extends StatefulWidget {
+class CarouselWithRow extends ConsumerStatefulWidget {
   @override
   _CarouselWithRowState createState() => _CarouselWithRowState();
 }
 
-class _CarouselWithRowState extends State<CarouselWithRow> {
+class _CarouselWithRowState extends ConsumerState<CarouselWithRow> {
   int _currentIndex = 0;
 
   @override
@@ -137,24 +144,42 @@ class _CarouselWithRowState extends State<CarouselWithRow> {
                   );
                 }),*/
         actions: <Widget>[
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return Builder(
-                      builder: (context) {
-                        return CartScreen();
-                      },
-                    );
-                  }),
-                );
-              },
-              icon: const Icon(Icons.shopping_bag_outlined)),
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CartScreen()),
+                  );
+                },
+                icon: const Icon(Icons.shopping_bag_outlined),
+              ),
+              if (ref.watch(objectListProvider).isNotEmpty)
+                Positioned(
+                  right: 6,
+                  top: 6,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+                    child: Text(
+                      '${ref.watch(objectListProvider).length}',
+                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+            ],
+          ),
           const SizedBox(
             width: 17,
           ),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search_outlined)),
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchScreen()));
+            },
+            icon: const Icon(Icons.search_outlined),
+          ),
           const SizedBox(
             width: 31,
           ),
@@ -346,14 +371,25 @@ class theBox extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            Container(
+            SizedBox(
               width: productWidth / 3,
-              height: productWidth,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(ood.getImage),
-                  fit: BoxFit.fill,
+              height: 116,
+              child: Image.network(
+                ood.getImage,
+                fit: BoxFit.fill,
+                errorBuilder: (_, __, ___) => Container(
+                  color: Colors.grey[200],
+                  child: const Icon(Icons.broken_image, color: Colors.grey),
                 ),
+                loadingBuilder: (_, child, progress) {
+                  if (progress == null) return child;
+                  return Container(
+                    color: Colors.grey[200],
+                    child: const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  );
+                },
               ),
             ),
           ],

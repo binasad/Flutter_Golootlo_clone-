@@ -38,21 +38,22 @@ class CartNotifier extends StateNotifier<List<CartItemClass>> {
   }
 
   void decreaseItem(String id) {
-
     state = [
-
-      for (var item in state)
-
-        if (item.id == id && item.noProduct > 0)
+      for (final item in state)
+        if (item.id != id)
+          item
+        else if (item.noProduct > 1)
           CartItemClass(
               id: item.id,
               title: item.title,
               price: item.price,
               description: item.description,
-              noProduct: item.noProduct - 1)
-              
-        else
-          item
+              noProduct: item.noProduct - 1),
+      // if id matches and noProduct == 1, item is dropped (removed)
     ];
+  }
+
+  void removeItem(String id) {
+    state = state.where((item) => item.id != id).toList();
   }
 }

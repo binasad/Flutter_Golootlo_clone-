@@ -102,13 +102,25 @@ class RestaurantCard extends StatelessWidget {
                     child: Stack(
                       children: [
                         Positioned(
-                          child: Container(
+                          child: SizedBox(
                             height: 119,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(cardMenu.getImage),
-                                fit: BoxFit.fitWidth,
+                            width: double.infinity,
+                            child: Image.network(
+                              cardMenu.getImage,
+                              fit: BoxFit.fitWidth,
+                              errorBuilder: (_, __, ___) => Container(
+                                color: Colors.grey[200],
+                                child: const Icon(Icons.broken_image, color: Colors.grey),
                               ),
+                              loadingBuilder: (_, child, progress) {
+                                if (progress == null) return child;
+                                return Container(
+                                  color: Colors.grey[200],
+                                  child: const Center(
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ),
